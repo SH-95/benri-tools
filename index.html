@@ -1,0 +1,290 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>편리 도구 모음 · benri-tools</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #f2f4f6;
+    --surface: #ffffff;
+    --text: #191f28;
+    --text-sec: #6b7684;
+    --text-muted: #b0b8c1;
+    --blue: #3182f6;
+    --blue-light: #ebf2ff;
+    --orange: #ff6b35;
+    --orange-light: #fff0eb;
+    --border: #e8eaed;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .logo-dot {
+    width: 24px; height: 24px;
+    background: var(--blue);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-dot svg { width: 14px; height: 14px; fill: #fff; }
+
+  /* LANG TOGGLE */
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    background: var(--bg);
+    border-radius: 20px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .lang-btn {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 13px;
+    border-radius: 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: inherit;
+    letter-spacing: 0.01em;
+  }
+  .lang-btn.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  }
+
+  /* HERO */
+  .hero {
+    padding: 52px 24px 32px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    background: var(--blue-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .hero h1 { font-size: 30px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+  .hero p { font-size: 15px; color: var(--text-sec); line-height: 1.6; }
+
+  /* SECTION */
+  .section { max-width: 680px; margin: 0 auto; padding: 0 24px 48px; }
+  .section-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+  }
+
+  /* TOOL CARDS */
+  .tools-list { display: flex; flex-direction: column; gap: 12px; }
+  .tool-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 22px 22px 20px;
+    text-decoration: none; color: inherit;
+    display: flex; align-items: center; gap: 18px;
+    border: 1px solid transparent;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .tool-card:hover {
+    border-color: var(--border);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  }
+  .tool-card:active { transform: scale(0.99); }
+  .tool-icon {
+    width: 52px; height: 52px;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .tool-body { flex: 1; min-width: 0; }
+  .tool-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .tool-desc { font-size: 13px; color: var(--text-sec); line-height: 1.5; }
+  .tool-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; }
+  .tool-arrow { color: var(--text-muted); flex-shrink: 0; }
+  .tool-arrow svg { width: 18px; height: 18px; display: block; }
+
+  /* COMING SOON */
+  .coming-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .coming-item { background: var(--surface); border-radius: var(--radius-md); padding: 18px 16px; opacity: 0.55; }
+  .coming-emoji { font-size: 20px; margin-bottom: 10px; }
+  .coming-name { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .coming-label { font-size: 11px; color: var(--text-muted); }
+
+  footer {
+    text-align: center; padding: 28px 24px;
+    font-size: 12px; color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    max-width: 680px; margin: 0 auto;
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 36px 20px 24px; }
+    .hero h1 { font-size: 24px; }
+    .section { padding: 0 20px 40px; }
+    .coming-grid { grid-template-columns: repeat(2, 1fr); }
+    .lang-btn { padding: 5px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="logo-dot"><svg viewBox="0 0 14 14"><path d="M2 7L6 11L12 3"/></svg></div>
+    benri-tools
+  </a>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" id="btn-ja" onclick="setLang('ja')">日本語</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">便利 · 편리 · ベンリ</div>
+  <h1 data-ko="자주 쓰는 계산,<br>빠르게 해결하세요" data-ja="よく使う計算を、<br>すばやく解決。"></h1>
+  <p data-ko="직접 만든 생활 밀착형 도구 모음입니다.<br>설치 없이, 광고 없이, 바로 씁니다."
+     data-ja="自分で作った、生活に密着したツール集です。<br>インストール不要、広告なし、すぐ使えます。"></p>
+</div>
+
+<div class="section">
+  <div class="section-label" data-ko="사용 가능한 도구" data-ja="使えるツール"></div>
+  <div class="tools-list">
+
+    <a class="tool-card" href="./benri-tools/fuel-calculator/index.html">
+      <div class="tool-icon" style="background:#fff7f0;">⛽</div>
+      <div class="tool-body">
+        <div class="tool-name" data-ko="가솔린 계산기" data-ja="ガソリン代計算機"></div>
+        <div class="tool-desc"
+          data-ko="거리 · 연비 · 유가로 주유비 계산.<br>인원별 분담금까지 한번에."
+          data-ja="距離・燃費・ガソリン代を入力して計算。<br>人数別の割り勘もまとめて確認。"></div>
+      </div>
+      <span class="tool-badge" style="background:var(--orange-light);color:var(--orange);"
+        data-ko="일상" data-ja="生活"></span>
+      <span class="tool-arrow">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h8M9 5l4 4-4 4"/></svg>
+      </span>
+    </a>
+
+    <a class="tool-card" href="./benri-tools/water-trip/index.html">
+      <div class="tool-icon" style="background:#eef6ff;">🏖️</div>
+      <div class="tool-body">
+        <div class="tool-name" data-ko="물놀이 여행 플래너" data-ja="水遊び旅行プランナー"></div>
+        <div class="tool-desc"
+          data-ko="후보지 4곳 비교 · 편의시설 · 메모.<br>클릭 한 번으로 상세 정보 확인."
+          data-ja="候補地4ヶ所を比較・設備・メモ。<br>タップひとつで詳細情報を確認。"></div>
+      </div>
+      <span class="tool-badge" style="background:var(--blue-light);color:var(--blue);"
+        data-ko="여행" data-ja="旅行"></span>
+      <span class="tool-arrow">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h8M9 5l4 4-4 4"/></svg>
+      </span>
+    </a>
+
+    <a class="tool-card" href="./benri-tools/splitPay/index.html">
+      <div class="tool-icon" style="background:#fff8e8;">💸</div>
+      <div class="tool-body">
+        <div class="tool-name" data-ko="SplitPay" data-ja="スプリットペイ"></div>
+        <div class="tool-desc"
+          data-ko="참가자 등록, 지출 작성, 정산 계산을 지원하는 실속 분할 정산 도구."
+          data-ja="参加者登録・支出記録・精算計算をサポートする、便利な割り勘ツール。"></div>
+      </div>
+      <span class="tool-badge" style="background:#ffefdb;color:#c15d27;"
+        data-ko="정산" data-ja="清算"></span>
+      <span class="tool-arrow">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h8M9 5l4 4-4 4"/></svg>
+      </span>
+    </a>
+
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label" data-ko="곧 추가될 도구" data-ja="近日追加予定"></div>
+  <div class="coming-grid">
+    <div class="coming-item">
+      <div class="coming-emoji">💴</div>
+      <div class="coming-name" data-ko="환율 계산기" data-ja="為替計算機"></div>
+      <div class="coming-label" data-ko="준비 중" data-ja="準備中"></div>
+    </div>
+    <div class="coming-item">
+      <div class="coming-emoji">🍱</div>
+      <div class="coming-name" data-ko="식비 분담" data-ja="食費割り勘"></div>
+      <div class="coming-label" data-ko="준비 중" data-ja="準備中"></div>
+    </div>
+    <div class="coming-item">
+      <div class="coming-emoji">📦</div>
+      <div class="coming-name" data-ko="짐 체크리스트" data-ja="荷物チェックリスト"></div>
+      <div class="coming-label" data-ko="준비 중" data-ja="準備中"></div>
+    </div>
+    <div class="coming-item">
+      <div class="coming-emoji">🗓️</div>
+      <div class="coming-name" data-ko="디데이 계산" data-ja="Dデイ計算"></div>
+      <div class="coming-label" data-ko="준비 중" data-ja="準備中"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span data-ko="만든 사람" data-ja="作成者"></span> · SH-95 &nbsp;·&nbsp; benri-tools
+</footer>
+
+<script>
+function setLang(lang) {
+  document.documentElement.lang = lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-ja').classList.toggle('active', lang === 'ja');
+  document.querySelectorAll('[data-ko]').forEach(el => {
+    el.innerHTML = el.dataset[lang] || '';
+  });
+  localStorage.setItem('benri-lang', lang);
+}
+
+const saved = localStorage.getItem('benri-lang') || 'ko';
+setLang(saved);
+</script>
+</body>
+</html>

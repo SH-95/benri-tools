@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ガソリン代計算</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f4f8;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 36px 36px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  }
+
+  h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 28px;
+    text-align: center;
+    letter-spacing: -0.3px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #dde3ec;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .input-wrap:focus-within {
+    border-color: #4f8ef7;
+  }
+
+  input[type="number"] {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px 14px;
+    font-size: 1rem;
+    color: #1a1a2e;
+    background: transparent;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  .unit {
+    padding: 0 14px;
+    font-size: 0.82rem;
+    color: #888;
+    white-space: nowrap;
+    background: #f7f9fc;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-left: 1.5px solid #dde3ec;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 8px;
+    background: #4f8ef7;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+
+  button:hover { background: #3a78e0; }
+  button:active { transform: scale(0.98); }
+
+  .hub-link-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 0 auto 24px; padding: 12px 18px; border-radius: 14px; border: 1px solid rgba(79,142,247,0.35); background: rgba(79,142,247,0.12); color: #1a1a2e; font-weight: 700; text-decoration: none; transition: transform 0.12s, background 0.12s; }
+  .hub-link-btn:hover { background: rgba(79,142,247,0.2); transform: translateY(-1px); }
+
+  .result {
+    margin-top: 24px;
+    padding: 20px;
+    background: #f0f6ff;
+    border-radius: 12px;
+    text-align: center;
+    display: none;
+  }
+
+  .result.show { display: block; }
+
+  .result-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .result-amount {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #4f8ef7;
+    letter-spacing: -1px;
+  }
+
+  .result-amount span {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-left: 4px;
+    color: #666;
+  }
+
+  .result-detail {
+    margin-top: 10px;
+    font-size: 0.78rem;
+    color: #888;
+    line-height: 1.7;
+  }
+
+  .split {
+    margin-top: 20px;
+    border-top: 1.5px solid #dde3ec;
+    padding-top: 18px;
+    display: none;
+  }
+
+  .split.show { display: block; }
+
+  .split-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+
+  .split-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 9px;
+    margin-bottom: 6px;
+    background: #f7f9fc;
+  }
+
+  .split-row:last-child { margin-bottom: 0; }
+
+  .split-label {
+    font-size: 0.85rem;
+    color: #555;
+    font-weight: 600;
+  }
+
+  .split-amount {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #1a1a2e;
+  }
+
+  .split-amount small {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #888;
+    margin-left: 2px;
+  }
+
+  .error {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #fff0f0;
+    border-radius: 10px;
+    color: #e04040;
+    font-size: 0.85rem;
+    text-align: center;
+    display: none;
+  }
+
+  .error.show { display: block; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>⛽ ガソリン代計算機</h1>
+
+  <div class="field">
+    <label>走行距離</label>
+    <div class="input-wrap">
+      <input type="number" id="km" placeholder="例：300" min="0">
+      <div class="unit">km</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>燃費</label>
+    <div class="input-wrap">
+      <input type="number" id="mpg" placeholder="例：15" min="0.1" step="0.1">
+      <div class="unit">km/L</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>ガソリン単価</label>
+    <div class="input-wrap">
+      <input type="number" id="price" placeholder="例：170" min="0">
+      <div class="unit">円/L</div>
+    </div>
+  </div>
+
+  <button onclick="calc()">計算する</button>
+
+  <div class="error" id="error">すべての項目を正しく入力してください。</div>
+
+  <div class="result" id="result">
+    <div class="result-label">ガソリン代の合計</div>
+
+    <div class="result-amount" id="total">—<span>円</span></div>
+    <div class="result-detail" id="detail"></div>
+
+    <div class="split show" id="split">
+      <div class="split-title">👥 人数割り</div>
+      <div class="split-row">
+        <div class="split-label">2人</div>
+        <div class="split-amount" id="p2">—<small>円/人</small></div>
+      </div>
+      <div class="split-row">
+        <div class="split-label">3人</div>
+        <div class="split-amount" id="p3">—<small>円/人</small></div>
+      </div>
+      <div class="split-row">
+        <div class="split-label">4人</div>
+        <div class="split-amount" id="p4">—<small>円/人</small></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function calc() {
+    const km = parseFloat(document.getElementById('km').value);
+    const mpg = parseFloat(document.getElementById('mpg').value);
+    const price = parseFloat(document.getElementById('price').value);
+
+    const err = document.getElementById('error');
+    const res = document.getElementById('result');
+
+    if (!km || !mpg || !price || km <= 0 || mpg <= 0 || price <= 0) {
+      err.classList.add('show');
+      res.classList.remove('show');
+      return;
+    }
+
+    err.classList.remove('show');
+
+    const liters = km / mpg;
+    const total = liters * price;
+
+    document.getElementById('total').innerHTML =
+      Math.round(total).toLocaleString() + '<span>円</span>';
+
+    document.getElementById('detail').innerHTML =
+      `使用燃料：${liters.toFixed(2)} L<br>` +
+      `（${km} km ÷ ${mpg} km/L × ${price} 円/L）`;
+
+    [2, 3, 4].forEach(n => {
+      document.getElementById('p' + n).innerHTML =
+        Math.round(total / n).toLocaleString() + '<small>円/人</small>';
+    });
+
+    res.classList.add('show');
+  }
+
+  // Enterキーで計算
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') calc();
+  });
+</script>
+</body>
+</html>
