@@ -67,19 +67,19 @@
   .hero-icon { width: 58px; height: 58px; border-radius: 12px; border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; flex-shrink: 0; }
   .hero-details { flex: 1; min-width: 220px; }
   /* ── CHANGED: 타이틀 + 아이콘 가로 배치 ── */
-  .hero-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .hero-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
   .hero-name { font-size: 22px; font-weight: 600; }
   .hero-subtitle { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
   .detail-links { display: flex; gap: 8px; flex-wrap: wrap; }
   /* ── CHANGED: 아이콘 크기 44px ── */
-  .power-link, .map-link { display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 12px; text-decoration: none; width: 44px; height: 44px; transition: transform 0.15s, background 0.15s; }
+  .power-link, .map-link { display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 10px; text-decoration: none; width: 32px; height: 32px; transition: transform 0.15s, background 0.15s; }
   .power-link { background: #e7f8ed; color: #2f7f47; border: 1px solid #bfe6c6; }
   .power-link:hover { transform: translateY(-1px); background: #d9f0db; }
   .map-link { background: #e7f1ff; color: #2c65d8; border: 1px solid #c9daf4; }
   .map-link:hover { transform: translateY(-1px); background: #d7e7ff; }
   /* ── CHANGED: 아이콘 내부 크기 22px ── */
-  .power-link i { font-size: 22px; }
-  .map-link img { width: 22px; height: 22px; display: block; }
+  .power-link i { font-size: 16px; }
+  .map-link img { width: 16px; height: 16px; display: block; }
 
   .section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 12px; }
   .sec-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
@@ -144,9 +144,9 @@
     .hero-name { font-size: 18px; }
     .hero-subtitle { font-size: 13px; }
     /* ── CHANGED: 모바일도 40px 유지 ── */
-    .map-link, .power-link { width: 40px; height: 40px; border-radius: 10px; }
-    .power-link i { font-size: 20px; }
-    .map-link img { width: 20px; height: 20px; }
+    .map-link, .power-link { width: 30px; height: 30px; border-radius: 8px; }
+    .power-link i { font-size: 15px; }
+    .map-link img { width: 15px; height: 15px; }
     .top-bar { justify-content: center; }
   }
   @media(max-width:520px){ .cards-grid{grid-template-columns:1fr} }
