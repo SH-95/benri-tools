@@ -30,20 +30,23 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* MAIN */
+  .sync-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--success-border); background: var(--success-bg); color: var(--success-text); }
+  .sync-badge.error { border-color: #f2d6db; background: #fff1f3; color: #a12d3f; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
   .main-wrap { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1.5rem; }
   .page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
   .page-header h1 { font-size: 24px; font-weight: 700; }
-  .hub-link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(23,138,221,0.25); background: rgba(23,138,221,0.08); color: var(--accent); font-size: 13px; text-decoration: none; transition: background 0.15s, transform 0.15s; }
+  .hub-link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(23,138,221,0.25); background: rgba(23,138,221,0.08); color: var(--accent); font-size: 13px; cursor: pointer; text-decoration: none; transition: background 0.15s, transform 0.15s; }
   .hub-link-btn:hover { background: rgba(23,138,221,0.16); transform: translateY(-1px); }
-  .page-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; padding-left: 0; }
+  .page-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
 
   .trip-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; cursor: pointer; position: relative; overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
   .trip-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(23,138,221,0.1); transform: translateY(-2px); }
   .card-accent-bar { height: 4px; border-radius: 4px 4px 0 0; position: absolute; top: 0; left: 0; right: 0; }
-  .card-icon-box { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; }
-  .card-icon-box i { font-size: 22px; }
+  .card-icon-box { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; font-weight: 700; }
   .card-name { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
   .card-meta { display: flex; flex-direction: column; gap: 5px; }
   .meta-row { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-sec); }
@@ -54,7 +57,6 @@
   .add-card:hover { background: var(--surface); border-color: var(--accent); }
   .add-card span { font-size: 13px; color: var(--text-muted); }
 
-  /* DETAIL */
   .detail-wrap { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1.5rem; display: none; }
   .top-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
   .back-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #0f537c; cursor: pointer; background: #eaf6ff; border: 1px solid #bcdff5; padding: 8px 14px; border-radius: 12px; transition: background 0.12s, transform 0.12s; font-weight: 600; }
@@ -65,26 +67,18 @@
   .delete-btn:hover { background: #ffe4e9; transform: translateY(-1px); }
   .detail-footer { display: flex; justify-content: flex-end; margin-top: 16px; }
 
-  .detail-hero { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 12px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1rem; }
   .detail-hero { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 12px; display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-  .hero-icon { width: 58px; height: 58px; border-radius: 12px; border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 22px; line-height: 1; overflow: hidden; cursor: default; background: var(--surface2); font-weight: 700; }
-  .hero-icon.photo-thumb-icon { cursor: pointer; background: var(--surface2); }
-  .hero-icon.photo-thumb-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .hero-icon i { display: inline-flex; align-items: center; justify-content: center; }
+  .hero-icon { width: 58px; height: 58px; border-radius: 12px; border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; }
   .hero-details { flex: 1; min-width: 220px; }
   .hero-name { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
   .hero-subtitle { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
-  .badges { display: flex; gap: 8px; flex-wrap: wrap; }
-  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 4px 10px; border-radius: var(--radius); border: 1px solid; }
-  .badge-time { background: var(--accent-bg); color: var(--accent-text); border-color: var(--accent-border); }
-  .badge-price { background: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
-  .detail-links { display: flex; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
+  .detail-links { display: flex; gap: 8px; flex-wrap: wrap; }
   .power-link, .map-link { display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 12px; text-decoration: none; width: 40px; height: 40px; transition: transform 0.15s, background 0.15s; }
-  .power-link { background: #e7f8ed; color: #2f7f47; border: 1px solid #bfe6c6; box-shadow: 0 8px 18px rgba(47, 127, 71, 0.12); }
+  .power-link { background: #e7f8ed; color: #2f7f47; border: 1px solid #bfe6c6; }
   .power-link:hover { transform: translateY(-1px); background: #d9f0db; }
-  .map-link { background: #e7f1ff; color: #2c65d8; border: 1px solid #c9daf4; box-shadow: 0 8px 18px rgba(44, 101, 216, 0.12); }
+  .map-link { background: #e7f1ff; color: #2c65d8; border: 1px solid #c9daf4; }
   .map-link:hover { transform: translateY(-1px); background: #d7e7ff; }
-  .power-link i, .map-link i { font-size: 16px; }
+  .power-link i { font-size: 16px; }
   .map-link img { width: 18px; height: 18px; display: block; }
 
   .section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 12px; }
@@ -92,27 +86,23 @@
   .facility-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
   .fac-item { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 6px; background: var(--bg); border-radius: var(--radius); font-size: 12px; color: var(--text-sec); text-align: center; }
   .fac-item i { font-size: 18px; color: var(--accent); }
-  .notes-text { font-size: 14px; line-height: 1.7; color: var(--text); font-family: inherit; font-weight: 400; }
+  .notes-text { font-size: 14px; line-height: 1.7; color: var(--text); }
   .score-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
   .score-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .score-links .score-meta { gap: 8px; }
   .score-label { color: var(--text-sec); display: flex; align-items: center; gap: 7px; }
   .score-meta { display: flex; align-items: center; gap: 10px; }
-  .score-val { font-family: inherit; font-weight: 400; font-size: 15px; color: var(--text); }
+  .score-val { font-size: 15px; color: var(--text); }
   .detail-stars { display: flex; gap: 4px; }
-  .detail-stars span { font-size: 16px; line-height: 1; color: #FFB800; }
+  .detail-stars span { font-size: 16px; color: #FFB800; }
   .detail-stars span.inactive { color: #d8d8d8; }
   .rating-picker { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
   .rating-star { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; transition: background 0.15s, transform 0.15s; font-size: 16px; color: #e0e0e0; background: #f5f7fb; border: 1px solid #dde3ec; }
-  .rating-star.filled { color: #FFB800; background: rgba(255, 184, 0, 0.12); border-color: rgba(255, 184, 0, 0.25); }
+  .rating-star.filled { color: #FFB800; background: rgba(255,184,0,0.12); border-color: rgba(255,184,0,0.25); }
   .rating-star:hover { transform: translateY(-1px); }
-  .rating-star.selected { box-shadow: inset 0 0 0 1px rgba(255, 184, 0, 0.2); }
 
-  /* IMAGE */
   .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
   .photo-thumb { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
   .photo-thumb:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
-  .photo-placeholder { aspect-ratio: 4/3; background: var(--bg); border: 1.5px dashed var(--border-strong); border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; color: var(--text-muted); transition: background 0.12s; }
   .photo-preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 8px; margin-top: 10px; }
   .photo-preview { position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
   .photo-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -127,18 +117,15 @@
   .viewer-prev { left: 12px; }
   .viewer-next { right: 12px; }
   .viewer-prev:hover, .viewer-next:hover, .viewer-close:hover { background: rgba(0,0,0,0.55); }
-  .photo-placeholder:hover { background: var(--surface); }
-  .photo-placeholder i { font-size: 22px; }
 
-  /* MODAL */
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; padding: 1rem; }
   .modal-bg.open { display: flex; }
   .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; width: min(460px, 100%); max-height: 90vh; overflow-y: auto; }
   .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
-  .field input, .field textarea, .field select { width: 100%; font-size: 14px; padding: 8px 10px; border-radius: var(--radius); border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-family: inherit; }
-  .field input:focus, .field textarea:focus, .field select:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .field input, .field textarea { width: 100%; font-size: 14px; padding: 8px 10px; border-radius: var(--radius); border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-family: inherit; }
+  .field input:focus, .field textarea:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
   .field textarea { min-height: 72px; resize: vertical; }
   .chip-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
   .chip { padding: 5px 11px; font-size: 12px; border-radius: var(--radius); border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text-sec); cursor: pointer; transition: all 0.1s; user-select: none; display: flex; align-items: center; gap: 4px; }
@@ -153,24 +140,17 @@
     .cards-grid { gap: 14px; }
     .top-bar { justify-content: space-between; }
     .detail-hero { padding: 1.4rem; }
-    .hero-icon { min-width: 52px; min-height: 52px; }
   }
-
   @media (max-width: 620px) {
-    .page-header { gap: 8px; }
-    .page-sub { padding-left: 0; }
     .detail-hero { flex-direction: row; align-items: center; }
-    .hero-icon { width: 48px; height: 48px; justify-content: center; }
-    .hero-details { min-width: 0; }
+    .hero-icon { width: 48px; height: 48px; }
     .hero-name { font-size: 18px; }
     .hero-subtitle { font-size: 13px; margin-bottom: 0; }
-    .detail-links { width: auto; justify-content: flex-end; gap: 8px; margin-left: auto; }
-    .map-link, .power-link { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 10px; }
+    .detail-links { margin-left: auto; }
+    .map-link, .power-link { width: 32px; height: 32px; border-radius: 10px; }
     .power-link i, .map-link img { width: 14px; height: 14px; font-size: 14px; }
     .top-bar { justify-content: center; }
-    .back-btn, .edit-btn { width: auto; padding: 8px 12px; justify-content: center; }
   }
-
   @media(max-width:520px){ .cards-grid{grid-template-columns:1fr} }
 </style>
 </head>
@@ -181,42 +161,42 @@
   <div class="page-header">
     <i class="ti ti-waves" style="font-size:22px;color:#178add"></i>
     <h1>물놀이 여행 후보지</h1>
-    <button class="hub-link-btn" onclick="shareCards()"><i class="ti ti-link"></i>URL 공유</button>
-    <!-- <a class="hub-link-btn" href="../../index.html"><i class="ti ti-arrow-back-up"></i>메인 허브</a> -->
+    <button class="hub-link-btn" id="share-btn"><i class="ti ti-link"></i>URL 공유</button>
+    <span class="sync-badge" id="sync-badge"><span class="sync-dot"></span>연결 중...</span>
   </div>
-  <div class="page-sub">카드를 클릭하면 상세 정보를 볼 수 있어요</div>
+  <div class="page-sub">카드를 클릭하면 상세 정보를 볼 수 있어요 · 실시간 동기화 중</div>
   <div class="cards-grid" id="cards-container"></div>
 </div>
 
 <!-- DETAIL PAGE -->
 <div class="detail-wrap" id="detail-page">
   <div class="top-bar">
-    <button class="back-btn" onclick="goMain()"><i class="ti ti-arrow-left"></i> 목록으로</button>
-    <button class="edit-btn" onclick="openEdit()"><i class="ti ti-edit"></i> 편집</button>
+    <button class="back-btn" id="back-btn"><i class="ti ti-arrow-left"></i> 목록으로</button>
+    <button class="edit-btn" id="edit-btn"><i class="ti ti-edit"></i> 편집</button>
   </div>
   <div id="detail-content"></div>
   <div class="detail-footer">
-    <button class="delete-btn" onclick="deleteCard()"><i class="ti ti-trash"></i> 삭제</button>
+    <button class="delete-btn" id="delete-btn"><i class="ti ti-trash"></i> 삭제</button>
   </div>
 </div>
 
 <!-- MODAL -->
-<div class="modal-bg" id="modal-bg" onclick="if(event.target===this) closeModal()">
+<div class="modal-bg" id="modal-bg">
   <div class="modal">
     <h3 id="modal-title">후보지 정보 입력</h3>
     <div class="field"><label>장소명</label><input id="f-name" placeholder="예: 이토시마 해수욕장"></div>
-    <div class="field"><label>日本語</label><input id="f-subtitle" ></div>
+    <div class="field"><label>日本語</label><input id="f-subtitle"></div>
     <div class="field"><label>소요시간</label><input id="f-time" placeholder="예: 차로 1시간 30분"></div>
     <div class="field"><label>가격</label><input id="f-price" placeholder="예: 입장료 500엔 / 무료"></div>
     <div class="field"><label>홈페이지</label><input id="f-website" placeholder="https://example.com"></div>
-    <div class="field"><label>구글맵 URL</label><input id="f-mapurl" placeholder="https://www.google.com/maps/..." ></div>
+    <div class="field"><label>구글맵 URL</label><input id="f-mapurl" placeholder="https://www.google.com/maps/..."></div>
     <div class="field">
       <label>편의시설</label>
       <div class="chip-group" id="fac-chips"></div>
     </div>
     <div class="field">
       <label>사진 업로드</label>
-      <input id="f-photos" type="file" accept="image/*" multiple onchange="handlePhotoInput(event)">
+      <input id="f-photos" type="file" accept="image/*" multiple>
       <div class="photo-preview-grid" id="photo-preview-grid"></div>
       <p class="photo-hint">최대 5장까지 추가할 수 있습니다.</p>
     </div>
@@ -226,208 +206,118 @@
       <input type="hidden" id="f-score" value="3">
     </div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">취소</button>
-      <button class="btn-save" onclick="saveCard()">저장</button>
+      <button class="btn-cancel" id="modal-cancel-btn">취소</button>
+      <button class="btn-save" id="modal-save-btn">저장</button>
     </div>
   </div>
 </div>
 
-<div class="photo-viewer-bg" id="photo-viewer-bg" onclick="if(event.target===this) closePhotoViewer()">
+<div class="photo-viewer-bg" id="photo-viewer-bg">
   <div class="photo-viewer">
-    <button class="viewer-close" onclick="closePhotoViewer()">×</button>
-    <button class="viewer-prev" onclick="movePhoto(-1)">‹</button>
+    <button class="viewer-close" id="viewer-close-btn">×</button>
+    <button class="viewer-prev" id="viewer-prev-btn">‹</button>
     <img class="viewer-image" id="viewer-image" src="" alt="사진 보기">
-    <button class="viewer-next" onclick="movePhoto(1)">›</button>
+    <button class="viewer-next" id="viewer-next-btn">›</button>
   </div>
 </div>
 
-<script>
-const CARD_STYLES = [
-  {icon:'ti-ripple', iconBg:'#e8f4fd', iconColor:'#1a7abf'},
-  {icon:'ti-tree', iconBg:'#e8faf3', iconColor:'#0f9e6e'},
-  {icon:'ti-mountain', iconBg:'#f0eeff', iconColor:'#6c4fd6'},
-  {icon:'ti-plant', iconBg:'#eaf3de', iconColor:'#3b7a2e'},
-];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-const FACILITIES = [
-  {id:'parking',  icon:'ti-car',             label:'무료주차'},
-  {id:'restroom', icon:'ti-building',         label:'화장실'},
-  {id:'shower',   icon:'ti-bath',          label:'샤워실'},
-  {id:'rental',   icon:'ti-shopping-bag',     label:'용품렌탈'},
-  {id:'restaurant', icon:'ti-tools-kitchen-2', label:'식당'},
-  {id:'convenience',icon:'ti-shopping-cart',   label:'편의점'},
-  {id:'waterplay',  icon:'ti-droplet',            label:'물놀이'},
-  {id:'onsen',      icon:'ti-ripple',     label:'온천'},
-  {id:'cook',       icon:'ti-flame',           label:'취사가능'},
-];
-
-const FACILITY_ID_MAP = {
-  locker:'rental',
-  food:'restaurant',
-  kids:'waterplay',
-  shade:'waterplay',
-  life:'waterplay',
-  wifi:'convenience',
+const firebaseConfig = {
+  apiKey: "AIzaSyDF83ac7VKySDfR4XoW30obfZizL2uImr8",
+  authDomain: "benri-tools-c518b.firebaseapp.com",
+  databaseURL: "https://benri-tools-c518b-default-rtdb.firebaseio.com",
+  projectId: "benri-tools-c518b",
+  storageBucket: "benri-tools-c518b.firebasestorage.app",
+  messagingSenderId: "193300241858",
+  appId: "1:193300241858:web:cc8acfcab5ddbeb6c28a5b",
+  measurementId: "G-Q1KR2VNMYR"
 };
 
-const JSONBLOB_API = 'https://jsonblob.com/api/jsonBlob';
-const REMOTE_API = (window.REMOTE_API_URL && window.REMOTE_API_URL.trim()) || '/api/blob';
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const cardsRef = ref(db, 'watertrip/cards');
 
+// ── 상수 ──────────────────────────────────────────────
+const CARD_STYLES = [
+  {icon:'ti-ripple', iconBg:'#e8f4fd', iconColor:'#1a7abf'},
+  {icon:'ti-tree',   iconBg:'#e8faf3', iconColor:'#0f9e6e'},
+  {icon:'ti-mountain',iconBg:'#f0eeff',iconColor:'#6c4fd6'},
+  {icon:'ti-plant',  iconBg:'#eaf3de', iconColor:'#3b7a2e'},
+];
+const FACILITIES = [
+  {id:'parking',     icon:'ti-car',              label:'무료주차'},
+  {id:'restroom',    icon:'ti-building',          label:'화장실'},
+  {id:'shower',      icon:'ti-bath',              label:'샤워실'},
+  {id:'rental',      icon:'ti-shopping-bag',      label:'용품렌탈'},
+  {id:'restaurant',  icon:'ti-tools-kitchen-2',   label:'식당'},
+  {id:'convenience', icon:'ti-shopping-cart',     label:'편의점'},
+  {id:'waterplay',   icon:'ti-droplet',           label:'물놀이'},
+  {id:'onsen',       icon:'ti-ripple',            label:'온천'},
+  {id:'cook',        icon:'ti-flame',             label:'취사가능'},
+];
 const COLORS = ['#378ADD','#1D9E75','#D85A30','#D4537E'];
-
-let cards = [
+const DEFAULT_CARDS = [
   {id:0, name:'이토시마 해수욕장', icon:'ti-ripple', iconBg:'#e8f4fd', iconColor:'#1a7abf', time:'차로 40분', price:'무료 (주차 700엔~)', facilities:['parking','restroom','shower','restaurant','waterplay'], notes:'후쿠오카 근교 인기 해변. 7~8월 성수기 혼잡. 오전 일찍 도착 추천. 모래사장 넓고 수심 얕아 어린이 가능.', score:5, images:[]},
   {id:1, name:'마이즈루 공원 분수', icon:'ti-tree', iconBg:'#e8faf3', iconColor:'#0f9e6e', time:'지하철 20분', price:'무료', facilities:['restroom','waterplay','convenience'], notes:'시내에서 가깝고 어린이 물놀이 공간 있음. 여름 한정 운영. 주차는 유료 공원 주차장 이용.', score:4, images:[]},
   {id:2, name:'노코노시마 섬', icon:'ti-mountain', iconBg:'#f0eeff', iconColor:'#6c4fd6', time:'페리 10분 포함 1시간', price:'페리 왕복 800엔 + 입장료 500엔', facilities:['parking','restroom','restaurant','rental','waterplay'], notes:'배 타고 가는 특별한 경험. 꽃밭과 바다 모두 즐길 수 있음. 스노클링 가능. 주말 페리 혼잡.', score:4, images:[]},
 ];
 
+// ── 상태 ──────────────────────────────────────────────
+let cards = [];
 let current = null;
 let editIdx = null;
 let selFac = [];
 let selImages = [];
 let currentPhotoIndex = 0;
-let currentBlobId = localStorage.getItem('wtpBlobId');
+let initialized = false;
 
-function save(){
-  try{ localStorage.setItem('wtp', JSON.stringify(cards)); }catch(e){}
-  if(currentBlobId){ updateRemoteBlob(currentBlobId).catch(() => console.warn('원격 저장 업데이트 실패')); }
-}
-function normalizeFacilities(items){
-  return [...new Set((items||[]).map(id => FACILITY_ID_MAP[id] || id).filter(id => FACILITIES.some(f => f.id === id)))];
-}
-
-function safeBase64Encode(str){
-  const b64 = btoa(unescape(encodeURIComponent(str)));
-  return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
-
-function safeBase64Decode(str){
-  str = str.replace(/-/g,'+').replace(/_/g,'/');
-  const pad = str.length % 4;
-  if(pad) str += '='.repeat(4-pad);
-  return decodeURIComponent(escape(atob(str)));
-}
-
-async function createRemoteBlob(){
-  const response = await fetch(REMOTE_API, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ cards }),
-  });
-  if(!response.ok) throw new Error('원격 저장 생성 실패');
-  const j = await response.json();
-  if(!j.blobId) throw new Error('원격 응답이 blobId를 포함하지 않습니다.');
-  localStorage.setItem('wtpBlobId', j.blobId);
-  currentBlobId = j.blobId;
-  return j.blobId;
-}
-
-async function updateRemoteBlob(blobId){
-  if(!blobId) throw new Error('blobId 없음');
-  const response = await fetch(REMOTE_API, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ blobId, cards }),
-  });
-  if(!response.ok) throw new Error('원격 저장 업데이트 실패');
-  return true;
-}
-
-async function shareCards(){
-  try{
-    const blobId = currentBlobId || await createRemoteBlob();
-    await updateRemoteBlob(blobId);
-    const url = `${window.location.origin}${window.location.pathname}?blob=${blobId}`;
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      await navigator.clipboard.writeText(url);
-      alert('공유 URL이 복사되었습니다.');
-    } else {
-      prompt('공유 URL을 복사하세요', url);
-    }
-  }catch(e){
-    console.error(e);
-    alert('외부 공유를 생성할 수 없습니다. 나중에 다시 시도해주세요.');
+// ── Firebase 저장 ──────────────────────────────────────
+async function saveToFirebase() {
+  try {
+    await set(cardsRef, cards);
+  } catch(e) {
+    console.error('Firebase 저장 실패:', e);
+    alert('저장에 실패했습니다. 네트워크를 확인해주세요.');
   }
 }
 
-async function loadFromBlob(blobId){
-  try{
-    const response = await fetch(`${JSONBLOB_API}/${blobId}`);
-    if(!response.ok) throw new Error('원격 데이터 로드 실패');
-    const imported = await response.json();
-    if(!Array.isArray(imported)) throw new Error('invalid data');
-    cards = imported.filter(card => card && card.name).map((card, i) => {
-      const normalized = { ...card, facilities: normalizeFacilities(card.facilities), id: i };
-      if(!normalized.icon){ const style = CARD_STYLES[i % CARD_STYLES.length]; return { ...normalized, icon: style.icon, iconBg: style.iconBg, iconColor: style.iconColor }; }
-      return normalized;
-    });
-    save();
-    return true;
-  }catch(e){
-    console.warn('원격 공유 데이터를 불러오는 중 오류:', e);
-    return false;
-  }
-}
+// ── Firebase 실시간 수신 ───────────────────────────────
+const syncBadge = document.getElementById('sync-badge');
 
-async function parseSharedUrl(){
-  const params = new URLSearchParams(window.location.search);
-  const blobId = params.get('blob');
-  if(blobId){
-    const ok = await loadFromBlob(blobId);
-    if(ok){
-      currentBlobId = blobId;
-      localStorage.setItem('wtpBlobId', blobId);
-      return true;
-    }
+onValue(cardsRef, (snapshot) => {
+  const data = snapshot.val();
+  if (data && Array.isArray(data) && data.length > 0) {
+    cards = data;
+  } else if (!initialized) {
+    // 첫 로드시 Firebase가 비어있으면 기본 데이터 저장
+    cards = DEFAULT_CARDS;
+    set(cardsRef, cards);
   }
-  const encoded = params.get('data');
-  if(!encoded) return false;
-  try{
-    const decoded = safeBase64Decode(encoded);
-    const imported = JSON.parse(decoded);
-    if(!Array.isArray(imported)) throw new Error('invalid data');
-    cards = imported.filter(card => card && card.name).map((card, i) => {
-      const normalized = { ...card, facilities: normalizeFacilities(card.facilities), id: i };
-      if(!normalized.icon){ const style = CARD_STYLES[i % CARD_STYLES.length]; return { ...normalized, icon: style.icon, iconBg: style.iconBg, iconColor: style.iconColor }; }
-      return normalized;
-    });
-    save();
-    return true;
-  }catch(e){
-    console.warn('URL 공유 데이터를 불러오는 중 오류:', e);
-    return false;
+  initialized = true;
+  syncBadge.className = 'sync-badge';
+  syncBadge.innerHTML = '<span class="sync-dot"></span>실시간 동기화 중';
+
+  // 현재 상태에 따라 UI 업데이트
+  if (document.getElementById('main-page').style.display !== 'none') {
+    renderMain();
+  } else if (current !== null && cards[current]) {
+    renderMain();
+    showDetail(current);
+  } else {
+    renderMain();
+    goMain();
   }
-}
+}, (error) => {
+  syncBadge.className = 'sync-badge error';
+  syncBadge.innerHTML = '<span class="sync-dot"></span>연결 끊김';
+  console.error('Firebase 연결 오류:', error);
+});
 
-function pastelColor(hex, amount = 0.35){
-  const clean = hex.replace('#','');
-  const num = parseInt(clean, 16);
-  let r = (num >> 16) & 255;
-  let g = (num >> 8) & 255;
-  let b = num & 255;
-  r = Math.round(r + (255 - r) * amount);
-  g = Math.round(g + (255 - g) * amount);
-  b = Math.round(b + (255 - b) * amount);
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-}
-
-async function load(){
-  try{
-    const d = localStorage.getItem('wtp');
-    if(d){
-      cards = JSON.parse(d).filter(card => card && card.name).map((card, i) => {
-        const normalized = { ...card, facilities: normalizeFacilities(card.facilities) };
-        if(!normalized.icon){ const style = CARD_STYLES[i % CARD_STYLES.length]; return { ...normalized, icon: style.icon, iconBg: style.iconBg, iconColor: style.iconColor }; }
-        return normalized;
-      });
-    }
-  }catch(e){}
-  if(await parseSharedUrl()){
-    // loaded from shared URL data
-  }
-}
-
-function renderMain(){
+// ── 렌더링 ────────────────────────────────────────────
+function renderMain() {
   const c = document.getElementById('cards-container');
   c.innerHTML = '';
   cards.forEach((card, i) => {
@@ -436,10 +326,10 @@ function renderMain(){
     d.tabIndex = 0;
     d.onclick = () => showDetail(i);
     d.onkeydown = e => { if(e.key==='Enter') showDetail(i); };
-    const iconBg = COLORS[i%4];
+    const color = COLORS[i % 4];
     d.innerHTML = `
-      <div class="card-accent-bar" style="background:${iconBg}"></div>
-      <div class="card-icon-box" style="background:${iconBg}; color:${card.iconBg}">${i+1}</div>
+      <div class="card-accent-bar" style="background:${color}"></div>
+      <div class="card-icon-box" style="background:${color}; color:${card.iconBg}">${i+1}</div>
       <div class="card-name">${card.name}</div>
       <div class="card-meta">
         <div class="meta-row"><i class="ti ti-clock"></i>${card.time||'미입력'}</div>
@@ -458,11 +348,13 @@ function renderMain(){
   c.appendChild(addCard);
 }
 
-function showDetail(i){
+function showDetail(i) {
   current = i;
   const card = cards[i];
+  if (!card) { goMain(); return; }
   const facs = FACILITIES.filter(f => (card.facilities||[]).includes(f.id));
   const score = Math.min(5, Math.max(1, parseInt(card.score) || 3));
+  const mapUrl = card.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(card.name)}`;
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-hero">
       <span class="hero-icon" style="background:${COLORS[i%4]}; color:${card.iconBg}">${i+1}</span>
@@ -470,14 +362,16 @@ function showDetail(i){
         <div class="hero-name">${card.name}</div>
         ${card.subtitle ? `<div class="hero-subtitle">${card.subtitle}</div>` : ''}
       </div>
-      ${(() => {
-        const mapUrl = card.mapUrl ? card.mapUrl : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(card.name)}`;
-        return `<div class="detail-links">${card.website ? `<a class="power-link" href="${card.website}" target="_blank" rel="noopener"><i class="ti ti-world"></i></a>` : ''}<a class="map-link" href="${mapUrl}" target="_blank" rel="noopener" title="구글맵"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 4.425 6 12 6 12s6-7.575 6-12c0-3.314-2.686-6-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z'/%3E%3C/svg%3E" alt="Google Maps"></a></div>`;
-      })()}
+      <div class="detail-links">
+        ${card.website ? `<a class="power-link" href="${card.website}" target="_blank" rel="noopener"><i class="ti ti-world"></i></a>` : ''}
+        <a class="map-link" href="${mapUrl}" target="_blank" rel="noopener" title="구글맵">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 4.425 6 12 6 12s6-7.575 6-12c0-3.314-2.686-6-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z'/%3E%3C/svg%3E" alt="Google Maps">
+        </a>
+      </div>
     </div>
     ${facs.length ? `<div class="section">
       <div class="sec-title"><i class="ti ti-building-community"></i>편의시설</div>
-      <div class="facility-grid">${facs.map(f=>`<div class="fac-item">${f.icon ? `<i class="ti ${f.icon}"></i>` : ''}${f.label}</div>`).join('')}</div>
+      <div class="facility-grid">${facs.map(f=>`<div class="fac-item"><i class="ti ${f.icon}"></i>${f.label}</div>`).join('')}</div>
     </div>` : ''}
     ${card.notes ? `<div class="section">
       <div class="sec-title"><i class="ti ti-notes"></i>메모</div>
@@ -485,42 +379,35 @@ function showDetail(i){
     </div>` : ''}
     ${card.images && card.images.length ? `<div class="section">
       <div class="sec-title"><i class="ti ti-photo"></i>사진</div>
-      <div class="photo-grid">${card.images.map((src, idx) => `<img class="photo-thumb" src="${src}" alt="사진 ${idx+1}" onclick="openPhotoViewer(${idx})">`).join('')}</div>
+      <div class="photo-grid">${card.images.map((src, idx) => `<img class="photo-thumb" src="${src}" alt="사진 ${idx+1}" data-idx="${idx}">`).join('')}</div>
     </div>` : ''}
     <div class="section">
       <div class="sec-title"><i class="ti ti-bulb"></i>요약</div>
-      <div class="score-row"><span class="score-label"><i class="ti ti-award"></i>추천도</span><span class="score-meta"><span class="detail-stars">${[1,2,3,4,5].map(n => `<span class="${n<=score ? '' : 'inactive'}">★</span>`).join('')}</span></span></div>
-      <div class="score-row"><span class="score-label"><i class="ti ti-clock"></i>소요시간</span><span class="score-val">${card.time || '미입력'}</span></div>
-      <div class="score-row"><span class="score-label"><i class="ti ti-currency-yen"></i>가격</span><span class="score-val">${card.price || '미입력'}</span></div>
+      <div class="score-row"><span class="score-label"><i class="ti ti-award"></i>추천도</span><span class="score-meta"><span class="detail-stars">${[1,2,3,4,5].map(n=>`<span class="${n<=score?'':'inactive'}">★</span>`).join('')}</span></span></div>
+      <div class="score-row"><span class="score-label"><i class="ti ti-clock"></i>소요시간</span><span class="score-val">${card.time||'미입력'}</span></div>
+      <div class="score-row"><span class="score-label"><i class="ti ti-currency-yen"></i>가격</span><span class="score-val">${card.price||'미입력'}</span></div>
     </div>`;
+
+  // 사진 클릭 이벤트
+  document.querySelectorAll('.photo-thumb').forEach(img => {
+    img.onclick = () => openPhotoViewer(parseInt(img.dataset.idx));
+  });
+
   document.getElementById('main-page').style.display = 'none';
   document.getElementById('detail-page').style.display = 'block';
-  window.location.hash = `#detail-${i}`;
 }
 
-function goMain(){
+function goMain() {
   document.getElementById('detail-page').style.display = 'none';
   document.getElementById('main-page').style.display = 'block';
-  history.replaceState(null, '', window.location.pathname + window.location.search);
   current = null;
 }
 
-function hydrateFromHash(){
-  const match = window.location.hash.match(/^#detail-(\d+)$/);
-  if(match){
-    const idx = parseInt(match[1], 10);
-    if(cards[idx]){
-      showDetail(idx);
-      return;
-    }
-  }
-  goMain();
-}
-
-function openEdit(i){
+// ── 편집 모달 ─────────────────────────────────────────
+function openEdit(i) {
   editIdx = (i !== undefined) ? i : current;
   const isNew = editIdx === cards.length;
-  const card = isNew ? { name:'', time:'', price:'', facilities:[], notes:'', score:3, images:[] } : cards[editIdx];
+  const card = isNew ? {name:'',time:'',price:'',facilities:[],notes:'',score:3,images:[]} : cards[editIdx];
   document.getElementById('modal-title').textContent = card.name ? '후보지 편집' : `${editIdx+1}번째 후보지 추가`;
   document.getElementById('f-name').value = card.name||'';
   document.getElementById('f-subtitle').value = card.subtitle||'';
@@ -534,28 +421,40 @@ function openEdit(i){
   selFac = [...(card.facilities||[])];
   selImages = [...(card.images||[])];
   document.getElementById('fac-chips').innerHTML = FACILITIES.map(f =>
-    `<div class="chip${selFac.includes(f.id)?' on':''}" onclick="toggleFac('${f.id}',this)">${f.icon ? `<i class="ti ${f.icon}" style="font-size:13px"></i>` : ''}${f.label}</div>`
+    `<div class="chip${selFac.includes(f.id)?' on':''}" data-id="${f.id}"><i class="ti ${f.icon}" style="font-size:13px"></i>${f.label}</div>`
   ).join('');
-  document.getElementById('photo-preview-grid').innerHTML = selImages.map((src, idx) =>
-    `<div class="photo-preview"><img src="${src}" alt="preview"><button class="preview-remove" type="button" onclick="removeEditPhoto(${idx})">×</button></div>`
-  ).join('');
+  document.querySelectorAll('#fac-chips .chip').forEach(chip => {
+    chip.onclick = () => {
+      const id = chip.dataset.id;
+      if(selFac.includes(id)){ selFac=selFac.filter(f=>f!==id); chip.classList.remove('on'); }
+      else { selFac.push(id); chip.classList.add('on'); }
+    };
+  });
+  renderPhotoPreviews();
   document.getElementById('f-photos').value = '';
   document.getElementById('modal-bg').classList.add('open');
 }
 
-function toggleFac(id, el){
-  if(selFac.includes(id)){ selFac=selFac.filter(f=>f!==id); el.classList.remove('on'); }
-  else { selFac.push(id); el.classList.add('on'); }
+function renderPhotoPreviews() {
+  document.getElementById('photo-preview-grid').innerHTML = selImages.map((src, idx) =>
+    `<div class="photo-preview"><img src="${src}" alt="preview"><button class="preview-remove" data-idx="${idx}" type="button">×</button></div>`
+  ).join('');
+  document.querySelectorAll('.preview-remove').forEach(btn => {
+    btn.onclick = () => {
+      selImages.splice(parseInt(btn.dataset.idx), 1);
+      renderPhotoPreviews();
+    };
+  });
 }
 
-function renderRatingPicker(value){
+function renderRatingPicker(value) {
   const container = document.getElementById('f-score-stars');
   container.innerHTML = '';
-  const score = Math.min(5, Math.max(1, parseInt(value) || 3));
+  const score = Math.min(5, Math.max(1, parseInt(value)||3));
   for(let i=1; i<=5; i++){
     const star = document.createElement('button');
     star.type = 'button';
-    star.className = `rating-star${i <= score ? ' filled' : ''}`;
+    star.className = `rating-star${i<=score?' filled':''}`;
     star.innerHTML = '★';
     star.onclick = () => {
       document.getElementById('f-score').value = i;
@@ -565,42 +464,7 @@ function renderRatingPicker(value){
   }
 }
 
-function deleteCard(){
-  if(current === null || !cards[current]) return;
-  if(!confirm('이 후보지를 삭제하시겠습니까?')) return;
-  cards.splice(current, 1);
-  save();
-  renderMain();
-  goMain();
-  current = null;
-}
-
-function closeModal(){ document.getElementById('modal-bg').classList.remove('open'); }
-
-function removeEditPhoto(index){
-  selImages.splice(index, 1);
-  document.getElementById('photo-preview-grid').innerHTML = selImages.map((src, idx) =>
-    `<div class="photo-preview"><img src="${src}" alt="preview"><button class="preview-remove" type="button" onclick="removeEditPhoto(${idx})">×</button></div>`
-  ).join('');
-}
-
-function handlePhotoInput(event){
-  const files = Array.from(event.target.files);
-  const available = 5 - selImages.length;
-  files.slice(0, available).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      selImages.push(reader.result);
-      document.getElementById('photo-preview-grid').innerHTML = selImages.map((src, idx) =>
-        `<div class="photo-preview"><img src="${src}" alt="preview"><button class="preview-remove" type="button" onclick="removeEditPhoto(${idx})">×</button></div>`
-      ).join('');
-    };
-    reader.readAsDataURL(file);
-  });
-  event.target.value = '';
-}
-
-function saveCard(){
+async function saveCard() {
   const style = CARD_STYLES[editIdx % CARD_STYLES.length];
   cards[editIdx] = {
     id: editIdx,
@@ -618,18 +482,22 @@ function saveCard(){
     score: parseInt(document.getElementById('f-score').value)||3,
     images: [...selImages],
   };
-  save();
   closeModal();
-  renderMain();
-  if(current === editIdx && cards[editIdx].name) showDetail(editIdx);
+  await saveToFirebase(); // onValue가 자동으로 UI 업데이트
 }
 
-load().then(() => {
-  renderMain();
-  hydrateFromHash();
-});
+async function deleteCard() {
+  if(current === null || !cards[current]) return;
+  if(!confirm('이 후보지를 삭제하시겠습니까?')) return;
+  cards.splice(current, 1);
+  goMain();
+  await saveToFirebase();
+}
 
-function openPhotoViewer(index){
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+
+// ── 사진 뷰어 ─────────────────────────────────────────
+function openPhotoViewer(index) {
   const card = cards[current];
   if(!card || !card.images || !card.images.length) return;
   currentPhotoIndex = index;
@@ -637,16 +505,49 @@ function openPhotoViewer(index){
   document.getElementById('photo-viewer-bg').classList.add('open');
 }
 
-function closePhotoViewer(){
+function closePhotoViewer() {
   document.getElementById('photo-viewer-bg').classList.remove('open');
 }
 
-function movePhoto(direction){
+function movePhoto(direction) {
   const card = cards[current];
   if(!card || !card.images || !card.images.length) return;
   currentPhotoIndex = (currentPhotoIndex + direction + card.images.length) % card.images.length;
   document.getElementById('viewer-image').src = card.images[currentPhotoIndex];
 }
+
+// ── URL 공유 ──────────────────────────────────────────
+function shareCards() {
+  const url = window.location.href.split('?')[0].split('#')[0];
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(() => alert('URL이 복사되었습니다.\n같은 URL을 열면 실시간으로 동기화됩니다.'));
+  } else {
+    prompt('이 URL을 공유하세요 (실시간 동기화)', url);
+  }
+}
+
+// ── 이벤트 바인딩 ─────────────────────────────────────
+document.getElementById('share-btn').onclick = shareCards;
+document.getElementById('back-btn').onclick = goMain;
+document.getElementById('edit-btn').onclick = () => openEdit();
+document.getElementById('delete-btn').onclick = deleteCard;
+document.getElementById('modal-cancel-btn').onclick = closeModal;
+document.getElementById('modal-save-btn').onclick = saveCard;
+document.getElementById('modal-bg').onclick = e => { if(e.target === document.getElementById('modal-bg')) closeModal(); };
+document.getElementById('viewer-close-btn').onclick = closePhotoViewer;
+document.getElementById('viewer-prev-btn').onclick = () => movePhoto(-1);
+document.getElementById('viewer-next-btn').onclick = () => movePhoto(1);
+document.getElementById('photo-viewer-bg').onclick = e => { if(e.target === document.getElementById('photo-viewer-bg')) closePhotoViewer(); };
+document.getElementById('f-photos').onchange = e => {
+  const files = Array.from(e.target.files);
+  const available = 5 - selImages.length;
+  files.slice(0, available).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = () => { selImages.push(reader.result); renderPhotoPreviews(); };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+};
 </script>
 </body>
 </html>
