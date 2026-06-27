@@ -105,9 +105,10 @@
   .photo-hint { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
   .photo-viewer-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 250; align-items: center; justify-content: center; padding: 1rem; }
   .photo-viewer-bg.open { display: flex; }
-  .photo-viewer { position: relative; width: min(920px, 100%); max-height: 92vh; background: var(--surface); border-radius: 16px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-  .viewer-image { width: 100%; max-height: 92vh; object-fit: contain; touch-action: pan-y; transition: transform 0.25s ease, opacity 0.25s ease; will-change: transform, opacity; }
-  .photo-viewer.dragging .viewer-image { transition: none; }
+  .photo-viewer { position: relative; width: min(920px, 100%); max-height: 92vh; background: var(--surface); border-radius: 16px; overflow: hidden; }
+  .viewer-track { display: flex; width: 300%; transform: translateX(-33.333%); transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
+  .photo-viewer.dragging .viewer-track { transition: none; }
+  .viewer-image { flex: 0 0 33.333%; width: 33.333%; max-height: 92vh; object-fit: contain; touch-action: pan-y; }
   .viewer-close, .viewer-prev, .viewer-next { position: absolute; border: none; background: rgba(0,0,0,0.35); color: #fff; cursor: pointer; border-radius: 999px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
   .viewer-close { top: 12px; right: 12px; }
   .viewer-prev { left: 12px; }
@@ -210,7 +211,11 @@
   <div class="photo-viewer">
     <button class="viewer-close" id="viewer-close-btn">×</button>
     <button class="viewer-prev" id="viewer-prev-btn">‹</button>
-    <img class="viewer-image" id="viewer-image" src="" alt="사진 보기">
+    <div class="viewer-track" id="viewer-track">
+      <img class="viewer-image" id="viewer-image-prev" src="" alt="">
+      <img class="viewer-image" id="viewer-image-curr" src="" alt="사진 보기">
+      <img class="viewer-image" id="viewer-image-next" src="" alt="">
+    </div>
     <button class="viewer-next" id="viewer-next-btn">›</button>
   </div>
 </div>
@@ -267,44 +272,35 @@ let selFac = [];
 let selImages = [];
 let currentPhotoIndex = 0;
 let initialized = false;
-const viewerImage = document.getElementById('viewer-image');
 const photoViewer = document.querySelector('.photo-viewer');
-let photoSwipe = { startX: 0, currentX: 0, deltaX: 0, startY: 0, active: false };
+const viewerTrack = document.getElementById('viewer-track');
+const viewerImgPrev = document.getElementById('viewer-image-prev');
+const viewerImgCurr = document.getElementById('viewer-image-curr');
+const viewerImgNext = document.getElementById('viewer-image-next');
+let photoSwipe = { startX: 0, deltaX: 0, startY: 0, active: false };
 
-function updateViewerImageTransform(offset) {
-  viewerImage.style.transform = `translateX(${offset}px)`;
-  viewerImage.style.opacity = Math.max(0.5, 1 - Math.abs(offset) / window.innerWidth).toString();
-}
-
-function resetViewerImage() {
-  viewerImage.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
-  updateViewerImageTransform(0);
-}
-
-function advanceViewerPhoto(direction) {
+function loadAdjacentImages() {
   const card = cards[current];
   if (!card || !card.images || !card.images.length) return;
-  currentPhotoIndex = (currentPhotoIndex + direction + card.images.length) % card.images.length;
-  viewerImage.src = card.images[currentPhotoIndex];
-  viewerImage.style.transition = 'none';
-  viewerImage.style.transform = `translateX(${direction * window.innerWidth}px)`;
-  viewerImage.style.opacity = '0.5';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      viewerImage.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
-      updateViewerImageTransform(0);
-    });
-  });
+  const total = card.images.length;
+  viewerImgPrev.src = card.images[(currentPhotoIndex - 1 + total) % total];
+  viewerImgCurr.src = card.images[currentPhotoIndex];
+  viewerImgNext.src = card.images[(currentPhotoIndex + 1) % total];
+}
+
+function setTrackPos(deltaX, animated) {
+  viewerTrack.style.transition = animated ? 'transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none';
+  viewerTrack.style.transform = `translateX(calc(-33.333% + ${deltaX}px))`;
 }
 
 function setupPhotoViewerSwipe() {
-  if (!photoViewer || !viewerImage) return;
+  if (!photoViewer || !viewerTrack) return;
 
   photoViewer.addEventListener('touchstart', e => {
     if (e.touches.length !== 1) return;
     photoSwipe.startX = e.touches[0].clientX;
     photoSwipe.startY = e.touches[0].clientY;
-    photoSwipe.currentX = photoSwipe.startX;
+    photoSwipe.deltaX = 0;
     photoSwipe.active = true;
     photoViewer.classList.add('dragging');
   });
@@ -312,32 +308,35 @@ function setupPhotoViewerSwipe() {
   photoViewer.addEventListener('touchmove', e => {
     if (!photoSwipe.active || e.touches.length !== 1) return;
     const touch = e.touches[0];
-    const deltaX = touch.clientX - photoSwipe.startX;
-    const deltaY = touch.clientY - photoSwipe.startY;
-    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 30) {
-      return;
-    }
-    photoSwipe.currentX = touch.clientX;
-    photoSwipe.deltaX = deltaX;
+    const dx = touch.clientX - photoSwipe.startX;
+    const dy = touch.clientY - photoSwipe.startY;
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 30) return;
+    photoSwipe.deltaX = dx;
     e.preventDefault();
-    viewerImage.style.transition = 'none';
-    updateViewerImageTransform(photoSwipe.deltaX);
+    setTrackPos(dx, false);
   }, { passive: false });
 
   photoViewer.addEventListener('touchend', () => {
     if (!photoSwipe.active) return;
     photoViewer.classList.remove('dragging');
-    const threshold = 80;
-    if (Math.abs(photoSwipe.deltaX) > threshold) {
+    const card = cards[current];
+    const total = card?.images?.length ?? 0;
+    const threshold = 60;
+
+    if (Math.abs(photoSwipe.deltaX) > threshold && total > 1) {
       const direction = photoSwipe.deltaX < 0 ? 1 : -1;
-      viewerImage.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
-      updateViewerImageTransform(-direction * window.innerWidth);
-      viewerImage.addEventListener('transitionend', function handler() {
-        viewerImage.removeEventListener('transitionend', handler);
-        advanceViewerPhoto(direction);
+      const targetPct = direction === 1 ? -66.666 : 0;
+      viewerTrack.style.transition = 'transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      viewerTrack.style.transform = `translateX(${targetPct}%)`;
+      viewerTrack.addEventListener('transitionend', function handler() {
+        viewerTrack.removeEventListener('transitionend', handler);
+        currentPhotoIndex = (currentPhotoIndex + direction + total) % total;
+        viewerTrack.style.transition = 'none';
+        viewerTrack.style.transform = 'translateX(-33.333%)';
+        loadAdjacentImages();
       });
     } else {
-      resetViewerImage();
+      setTrackPos(0, true);
     }
     photoSwipe.active = false;
   });
@@ -571,8 +570,9 @@ function openPhotoViewer(index) {
   const card = cards[current];
   if(!card || !card.images || !card.images.length) return;
   currentPhotoIndex = index;
-  viewerImage.src = card.images[currentPhotoIndex];
-  resetViewerImage();
+  loadAdjacentImages();
+  viewerTrack.style.transition = 'none';
+  viewerTrack.style.transform = 'translateX(-33.333%)';
   document.getElementById('photo-viewer-bg').classList.add('open');
 }
 
@@ -583,9 +583,17 @@ function closePhotoViewer() {
 function movePhoto(direction) {
   const card = cards[current];
   if(!card || !card.images || !card.images.length) return;
-  currentPhotoIndex = (currentPhotoIndex + direction + card.images.length) % card.images.length;
-  viewerImage.src = card.images[currentPhotoIndex];
-  resetViewerImage();
+  const total = card.images.length;
+  const targetPct = direction === 1 ? -66.666 : 0;
+  viewerTrack.style.transition = 'transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  viewerTrack.style.transform = `translateX(${targetPct}%)`;
+  viewerTrack.addEventListener('transitionend', function handler() {
+    viewerTrack.removeEventListener('transitionend', handler);
+    currentPhotoIndex = (currentPhotoIndex + direction + total) % total;
+    viewerTrack.style.transition = 'none';
+    viewerTrack.style.transform = 'translateX(-33.333%)';
+    loadAdjacentImages();
+  });
 }
 
 // ── 이벤트 바인딩 ─────────────────────────────────────
