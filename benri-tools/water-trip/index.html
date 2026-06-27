@@ -52,7 +52,7 @@
   .add-card:hover { background: var(--surface); border-color: var(--accent); }
   .add-card span { font-size: 13px; color: var(--text-muted); }
 
-  .detail-wrap { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1.5rem; display: none; }
+  .detail-wrap { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1.5rem; display: none; touch-action: pan-y; }
   .top-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
   .back-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #0f537c; cursor: pointer; background: #eaf6ff; border: 1px solid #bcdff5; padding: 8px 14px; border-radius: 12px; transition: background 0.12s, transform 0.12s; font-weight: 600; }
   .back-btn:hover { background: #d8ecff; transform: translateY(-1px); }
@@ -629,7 +629,7 @@ function enableDetailSwipeBack() {
     if (!tracking || e.touches.length !== 1) return;
     const dx = e.touches[0].clientX - startX;
     const dy = e.touches[0].clientY - startY;
-    if (isHorizontal === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+    if (isHorizontal === null && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
       isHorizontal = Math.abs(dx) > Math.abs(dy);
     }
     if (isHorizontal) e.preventDefault();
@@ -640,6 +640,11 @@ function enableDetailSwipeBack() {
     const dx = e.changedTouches[0].clientX - startX;
     const dy = e.changedTouches[0].clientY - startY;
     if (isHorizontal && dx < -80 && Math.abs(dy) < 120) history.back();
+    tracking = false;
+    isHorizontal = null;
+  }, { passive: true });
+
+  detailPage.addEventListener('touchcancel', () => {
     tracking = false;
     isHorizontal = null;
   }, { passive: true });
