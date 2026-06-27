@@ -62,19 +62,24 @@
   .delete-btn:hover { background: #ffe4e9; transform: translateY(-1px); }
   .detail-footer { display: flex; justify-content: flex-end; margin-top: 16px; }
 
-  .detail-hero { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 12px; display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-  .hero-icon { width: 58px; height: 58px; border-radius: 12px; border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; }
+  /* ── CHANGED: justify-content: space-between 제거 ── */
+  .detail-hero { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 12px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1rem; }
+  .hero-icon { width: 58px; height: 58px; border-radius: 12px; border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; flex-shrink: 0; }
   .hero-details { flex: 1; min-width: 220px; }
-  .hero-name { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
-  .hero-subtitle { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
+  /* ── CHANGED: 타이틀 + 아이콘 가로 배치 ── */
+  .hero-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .hero-name { font-size: 22px; font-weight: 600; }
+  .hero-subtitle { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
   .detail-links { display: flex; gap: 8px; flex-wrap: wrap; }
-  .power-link, .map-link { display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 12px; text-decoration: none; width: 40px; height: 40px; transition: transform 0.15s, background 0.15s; }
+  /* ── CHANGED: 아이콘 크기 44px ── */
+  .power-link, .map-link { display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 12px; text-decoration: none; width: 44px; height: 44px; transition: transform 0.15s, background 0.15s; }
   .power-link { background: #e7f8ed; color: #2f7f47; border: 1px solid #bfe6c6; }
   .power-link:hover { transform: translateY(-1px); background: #d9f0db; }
   .map-link { background: #e7f1ff; color: #2c65d8; border: 1px solid #c9daf4; }
   .map-link:hover { transform: translateY(-1px); background: #d7e7ff; }
-  .power-link i { font-size: 16px; }
-  .map-link img { width: 18px; height: 18px; display: block; }
+  /* ── CHANGED: 아이콘 내부 크기 22px ── */
+  .power-link i { font-size: 22px; }
+  .map-link img { width: 22px; height: 22px; display: block; }
 
   .section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 12px; }
   .sec-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
@@ -137,10 +142,11 @@
     .detail-hero { flex-direction: row; align-items: center; }
     .hero-icon { width: 48px; height: 48px; }
     .hero-name { font-size: 18px; }
-    .hero-subtitle { font-size: 13px; margin-bottom: 0; }
-    .detail-links { margin-left: auto; }
-    .map-link, .power-link { width: 32px; height: 32px; border-radius: 10px; }
-    .power-link i, .map-link img { width: 14px; height: 14px; font-size: 14px; }
+    .hero-subtitle { font-size: 13px; }
+    /* ── CHANGED: 모바일도 40px 유지 ── */
+    .map-link, .power-link { width: 40px; height: 40px; border-radius: 10px; }
+    .power-link i { font-size: 20px; }
+    .map-link img { width: 20px; height: 20px; }
     .top-bar { justify-content: center; }
   }
   @media(max-width:520px){ .cards-grid{grid-template-columns:1fr} }
@@ -231,7 +237,6 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const cardsRef = ref(db, 'watertrip/cards');
 
-// ── 상수 ──────────────────────────────────────────────
 const CARD_STYLES = [
   {icon:'ti-ripple', iconBg:'#e8f4fd', iconColor:'#1a7abf'},
   {icon:'ti-tree',   iconBg:'#e8faf3', iconColor:'#0f9e6e'},
@@ -256,7 +261,6 @@ const DEFAULT_CARDS = [
   {id:2, name:'노코노시마 섬', icon:'ti-mountain', iconBg:'#f0eeff', iconColor:'#6c4fd6', time:'페리 10분 포함 1시간', price:'페리 왕복 800엔 + 입장료 500엔', facilities:['parking','restroom','restaurant','rental','waterplay'], notes:'배 타고 가는 특별한 경험. 꽃밭과 바다 모두 즐길 수 있음. 스노클링 가능. 주말 페리 혼잡.', score:4, images:[]},
 ];
 
-// ── 상태 ──────────────────────────────────────────────
 let cards = [];
 let current = null;
 let editIdx = null;
@@ -336,7 +340,6 @@ function setupPhotoViewerSwipe() {
 
 setupPhotoViewerSwipe();
 
-// ── Firebase 저장 ──────────────────────────────────────
 async function saveToFirebase() {
   try {
     await set(cardsRef, cards);
@@ -346,20 +349,16 @@ async function saveToFirebase() {
   }
 }
 
-// ── Firebase 실시간 수신 ───────────────────────────────
-
 onValue(cardsRef, (snapshot) => {
   const data = snapshot.val();
   if (data && Array.isArray(data) && data.length > 0) {
     cards = data;
   } else if (!initialized) {
-    // 첫 로드시 Firebase가 비어있으면 기본 데이터 저장
     cards = DEFAULT_CARDS;
     set(cardsRef, cards);
   }
   initialized = true;
 
-  // 현재 상태에 따라 UI 업데이트
   if (document.getElementById('main-page').style.display !== 'none') {
     renderMain();
   } else if (current !== null && cards[current]) {
@@ -373,7 +372,6 @@ onValue(cardsRef, (snapshot) => {
   console.error('Firebase 연결 오류:', error);
 });
 
-// ── 렌더링 ────────────────────────────────────────────
 function renderMain() {
   const c = document.getElementById('cards-container');
   c.innerHTML = '';
@@ -412,18 +410,22 @@ function showDetail(i) {
   const facs = FACILITIES.filter(f => (card.facilities||[]).includes(f.id));
   const score = Math.min(5, Math.max(1, parseInt(card.score) || 3));
   const mapUrl = card.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(card.name)}`;
+
+  // ── CHANGED: detail-links를 hero-title-row 안으로 이동 ──
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-hero">
       <span class="hero-icon" style="background:${COLORS[i%4]}; color:${card.iconBg}">${i+1}</span>
       <div class="hero-details">
-        <div class="hero-name">${card.name}</div>
+        <div class="hero-title-row">
+          <div class="hero-name">${card.name}</div>
+          <div class="detail-links">
+            ${card.website ? `<a class="power-link" href="${card.website}" target="_blank" rel="noopener"><i class="ti ti-world"></i></a>` : ''}
+            <a class="map-link" href="${mapUrl}" target="_blank" rel="noopener" title="구글맵">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 4.425 6 12 6 12s6-7.575 6-12c0-3.314-2.686-6-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z'/%3E%3C/svg%3E" alt="Google Maps">
+            </a>
+          </div>
+        </div>
         ${card.subtitle ? `<div class="hero-subtitle">${card.subtitle}</div>` : ''}
-      </div>
-      <div class="detail-links">
-        ${card.website ? `<a class="power-link" href="${card.website}" target="_blank" rel="noopener"><i class="ti ti-world"></i></a>` : ''}
-        <a class="map-link" href="${mapUrl}" target="_blank" rel="noopener" title="구글맵">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 4.425 6 12 6 12s6-7.575 6-12c0-3.314-2.686-6-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z'/%3E%3C/svg%3E" alt="Google Maps">
-        </a>
       </div>
     </div>
     ${facs.length ? `<div class="section">
@@ -449,7 +451,6 @@ function showDetail(i) {
       <div class="score-row"><span class="score-label"><i class="ti ti-currency-yen"></i>가격</span><span class="score-val">${card.price||'미입력'}</span></div>
     </div>`;
 
-  // 사진 클릭 이벤트
   document.querySelectorAll('.photo-thumb').forEach(img => {
     img.onclick = () => openPhotoViewer(parseInt(img.dataset.idx));
   });
@@ -465,7 +466,6 @@ function goMain() {
   current = null;
 }
 
-// ── 편집 모달 ─────────────────────────────────────────
 function openEdit(i) {
   editIdx = (i !== undefined) ? i : current;
   const isNew = editIdx === cards.length;
@@ -565,7 +565,6 @@ async function deleteCard() {
 
 function closeModal() { saveCard(); }
 
-// ── 사진 뷰어 ─────────────────────────────────────────
 function openPhotoViewer(index) {
   const card = cards[current];
   if(!card || !card.images || !card.images.length) return;
@@ -596,7 +595,6 @@ function movePhoto(direction) {
   });
 }
 
-// ── 이벤트 바인딩 ─────────────────────────────────────
 document.getElementById('back-btn').onclick = () => history.back();
 window.addEventListener('popstate', () => {
   if (document.getElementById('detail-page').style.display !== 'none') goMain();
@@ -608,7 +606,6 @@ document.getElementById('modal-save-btn').onclick = saveCard;
 document.getElementById('modal-bg').onclick = e => { if(e.target === document.getElementById('modal-bg')) closeModal(); };
 document.getElementById('photo-viewer-bg').onclick = e => { if(e.target === document.getElementById('photo-viewer-bg')) closePhotoViewer(); };
 
-// ── 상세페이지 왼쪽 스와이프 뒤로가기 ──────────────────────
 enableDetailSwipeBack();
 
 function enableDetailSwipeBack() {
