@@ -30,11 +30,6 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  .sync-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--success-border); background: var(--success-bg); color: var(--success-text); }
-  .sync-badge.error { border-color: #f2d6db; background: #fff1f3; color: #a12d3f; }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
   .main-wrap { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1.5rem; }
   .page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
   .page-header h1 { font-size: 24px; font-weight: 700; }
@@ -118,9 +113,9 @@
   .viewer-next { right: 12px; }
   .viewer-prev:hover, .viewer-next:hover, .viewer-close:hover { background: rgba(0,0,0,0.55); }
 
-  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-start; justify-content: center; padding: 1rem 0; overflow-y: auto; }
   .modal-bg.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; width: min(460px, 100%); max-height: 90vh; overflow-y: auto; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; width: min(460px, 100%); max-height: calc(100vh - 2rem); overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
@@ -161,10 +156,8 @@
   <div class="page-header">
     <i class="ti ti-waves" style="font-size:22px;color:#178add"></i>
     <h1>물놀이 여행 후보지</h1>
-    <button class="hub-link-btn" id="share-btn"><i class="ti ti-link"></i>URL 공유</button>
-    <span class="sync-badge" id="sync-badge"><span class="sync-dot"></span>연결 중...</span>
   </div>
-  <div class="page-sub">카드를 클릭하면 상세 정보를 볼 수 있어요 · 실시간 동기화 중</div>
+  <div class="page-sub">카드를 클릭하면 상세 정보를 볼 수 있어요</div>
   <div class="cards-grid" id="cards-container"></div>
 </div>
 
@@ -285,7 +278,6 @@ async function saveToFirebase() {
 }
 
 // ── Firebase 실시간 수신 ───────────────────────────────
-const syncBadge = document.getElementById('sync-badge');
 
 onValue(cardsRef, (snapshot) => {
   const data = snapshot.val();
@@ -297,8 +289,6 @@ onValue(cardsRef, (snapshot) => {
     set(cardsRef, cards);
   }
   initialized = true;
-  syncBadge.className = 'sync-badge';
-  syncBadge.innerHTML = '<span class="sync-dot"></span>실시간 동기화 중';
 
   // 현재 상태에 따라 UI 업데이트
   if (document.getElementById('main-page').style.display !== 'none') {
@@ -311,8 +301,6 @@ onValue(cardsRef, (snapshot) => {
     goMain();
   }
 }, (error) => {
-  syncBadge.className = 'sync-badge error';
-  syncBadge.innerHTML = '<span class="sync-dot"></span>연결 끊김';
   console.error('Firebase 연결 오류:', error);
 });
 
@@ -516,18 +504,7 @@ function movePhoto(direction) {
   document.getElementById('viewer-image').src = card.images[currentPhotoIndex];
 }
 
-// ── URL 공유 ──────────────────────────────────────────
-function shareCards() {
-  const url = window.location.href.split('?')[0].split('#')[0];
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(() => alert('URL이 복사되었습니다.\n같은 URL을 열면 실시간으로 동기화됩니다.'));
-  } else {
-    prompt('이 URL을 공유하세요 (실시간 동기화)', url);
-  }
-}
-
 // ── 이벤트 바인딩 ─────────────────────────────────────
-document.getElementById('share-btn').onclick = shareCards;
 document.getElementById('back-btn').onclick = goMain;
 document.getElementById('edit-btn').onclick = () => openEdit();
 document.getElementById('delete-btn').onclick = deleteCard;
