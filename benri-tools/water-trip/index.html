@@ -109,8 +109,6 @@
   .viewer-track { display: flex; width: 300%; transform: translateX(-33.333%); transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
   .photo-viewer.dragging .viewer-track { transition: none; }
   .viewer-image { flex: 0 0 33.333%; width: 33.333%; max-height: 92vh; object-fit: contain; touch-action: pan-y; }
-  .viewer-close { position: absolute; top: 12px; right: 12px; border: none; background: rgba(0,0,0,0.35); color: #fff; cursor: pointer; border-radius: 999px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
-  .viewer-close:hover { background: rgba(0,0,0,0.55); }
 
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-start; justify-content: center; padding: 1rem 0; overflow-y: auto; }
   .modal-bg.open { display: flex; }
@@ -206,7 +204,6 @@
 
 <div class="photo-viewer-bg" id="photo-viewer-bg">
   <div class="photo-viewer">
-    <button class="viewer-close" id="viewer-close-btn">×</button>
     <div class="viewer-track" id="viewer-track">
       <img class="viewer-image" id="viewer-image-prev" src="" alt="">
       <img class="viewer-image" id="viewer-image-curr" src="" alt="사진 보기">
@@ -459,6 +456,7 @@ function showDetail(i) {
 
   document.getElementById('main-page').style.display = 'none';
   document.getElementById('detail-page').style.display = 'block';
+  history.pushState({ page: 'detail' }, '');
 }
 
 function goMain() {
@@ -561,7 +559,7 @@ async function deleteCard() {
   if(current === null || !cards[current]) return;
   if(!confirm('이 후보지를 삭제하시겠습니까?')) return;
   cards.splice(current, 1);
-  goMain();
+  history.back();
   await saveToFirebase();
 }
 
@@ -599,13 +597,15 @@ function movePhoto(direction) {
 }
 
 // ── 이벤트 바인딩 ─────────────────────────────────────
-document.getElementById('back-btn').onclick = goMain;
+document.getElementById('back-btn').onclick = () => history.back();
+window.addEventListener('popstate', () => {
+  if (document.getElementById('detail-page').style.display !== 'none') goMain();
+});
 document.getElementById('edit-btn').onclick = () => openEdit();
 document.getElementById('delete-btn').onclick = deleteCard;
 document.getElementById('modal-cancel-btn').onclick = closeModal;
 document.getElementById('modal-save-btn').onclick = saveCard;
 document.getElementById('modal-bg').onclick = e => { if(e.target === document.getElementById('modal-bg')) closeModal(); };
-document.getElementById('viewer-close-btn').onclick = closePhotoViewer;
 document.getElementById('photo-viewer-bg').onclick = e => { if(e.target === document.getElementById('photo-viewer-bg')) closePhotoViewer(); };
 
 // ── 상세페이지 왼쪽 스와이프 뒤로가기 ──────────────────────
@@ -639,7 +639,7 @@ function enableDetailSwipeBack() {
     if (!tracking) return;
     const dx = e.changedTouches[0].clientX - startX;
     const dy = e.changedTouches[0].clientY - startY;
-    if (isHorizontal && dx < -80 && Math.abs(dy) < 120) goMain();
+    if (isHorizontal && dx < -80 && Math.abs(dy) < 120) history.back();
     tracking = false;
     isHorizontal = null;
   }, { passive: true });
