@@ -109,11 +109,8 @@
   .viewer-track { display: flex; width: 300%; transform: translateX(-33.333%); transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
   .photo-viewer.dragging .viewer-track { transition: none; }
   .viewer-image { flex: 0 0 33.333%; width: 33.333%; max-height: 92vh; object-fit: contain; touch-action: pan-y; }
-  .viewer-close, .viewer-prev, .viewer-next { position: absolute; border: none; background: rgba(0,0,0,0.35); color: #fff; cursor: pointer; border-radius: 999px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
-  .viewer-close { top: 12px; right: 12px; }
-  .viewer-prev { left: 12px; }
-  .viewer-next { right: 12px; }
-  .viewer-prev:hover, .viewer-next:hover, .viewer-close:hover { background: rgba(0,0,0,0.55); }
+  .viewer-close { position: absolute; top: 12px; right: 12px; border: none; background: rgba(0,0,0,0.35); color: #fff; cursor: pointer; border-radius: 999px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+  .viewer-close:hover { background: rgba(0,0,0,0.55); }
 
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-start; justify-content: center; padding: 1rem 0; overflow-y: auto; }
   .modal-bg.open { display: flex; }
@@ -201,7 +198,7 @@
       <input type="hidden" id="f-score" value="3">
     </div>
     <div class="modal-btns">
-      <button class="btn-cancel" id="modal-cancel-btn">취소</button>
+      <button class="btn-cancel" id="modal-cancel-btn">닫기</button>
       <button class="btn-save" id="modal-save-btn">저장</button>
     </div>
   </div>
@@ -210,13 +207,11 @@
 <div class="photo-viewer-bg" id="photo-viewer-bg">
   <div class="photo-viewer">
     <button class="viewer-close" id="viewer-close-btn">×</button>
-    <button class="viewer-prev" id="viewer-prev-btn">‹</button>
     <div class="viewer-track" id="viewer-track">
       <img class="viewer-image" id="viewer-image-prev" src="" alt="">
       <img class="viewer-image" id="viewer-image-curr" src="" alt="사진 보기">
       <img class="viewer-image" id="viewer-image-next" src="" alt="">
     </div>
-    <button class="viewer-next" id="viewer-next-btn">›</button>
   </div>
 </div>
 
@@ -533,11 +528,18 @@ function renderRatingPicker(value) {
   }
 }
 
+function _dismissModal() {
+  document.getElementById('modal-bg').classList.remove('open');
+}
+
 async function saveCard() {
+  const name = document.getElementById('f-name').value.trim();
+  const isNew = editIdx === cards.length;
+  if (isNew && !name) { _dismissModal(); return; }
   const style = CARD_STYLES[editIdx % CARD_STYLES.length];
   cards[editIdx] = {
     id: editIdx,
-    name: document.getElementById('f-name').value.trim(),
+    name,
     icon: style.icon,
     iconBg: style.iconBg,
     iconColor: style.iconColor,
@@ -551,8 +553,8 @@ async function saveCard() {
     score: parseInt(document.getElementById('f-score').value)||3,
     images: [...selImages],
   };
-  closeModal();
-  await saveToFirebase(); // onValue가 자동으로 UI 업데이트
+  _dismissModal();
+  await saveToFirebase();
 }
 
 async function deleteCard() {
@@ -563,7 +565,7 @@ async function deleteCard() {
   await saveToFirebase();
 }
 
-function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+function closeModal() { saveCard(); }
 
 // ── 사진 뷰어 ─────────────────────────────────────────
 function openPhotoViewer(index) {
@@ -604,8 +606,6 @@ document.getElementById('modal-cancel-btn').onclick = closeModal;
 document.getElementById('modal-save-btn').onclick = saveCard;
 document.getElementById('modal-bg').onclick = e => { if(e.target === document.getElementById('modal-bg')) closeModal(); };
 document.getElementById('viewer-close-btn').onclick = closePhotoViewer;
-document.getElementById('viewer-prev-btn').onclick = () => movePhoto(-1);
-document.getElementById('viewer-next-btn').onclick = () => movePhoto(1);
 document.getElementById('photo-viewer-bg').onclick = e => { if(e.target === document.getElementById('photo-viewer-bg')) closePhotoViewer(); };
 
 // ── 상세페이지 왼쪽 스와이프 뒤로가기 ──────────────────────
@@ -613,36 +613,36 @@ enableDetailSwipeBack();
 
 function enableDetailSwipeBack() {
   const detailPage = document.getElementById('detail-page');
-  let startX = 0;
-  let startY = 0;
-  let currentX = 0;
+  let startX = 0, startY = 0;
   let tracking = false;
+  let isHorizontal = null;
 
   detailPage.addEventListener('touchstart', e => {
     if (e.touches.length !== 1) return;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-    currentX = startX;
     tracking = true;
-  });
+    isHorizontal = null;
+  }, { passive: true });
 
   detailPage.addEventListener('touchmove', e => {
     if (!tracking || e.touches.length !== 1) return;
-    currentX = e.touches[0].clientX;
-    const deltaY = Math.abs(e.touches[0].clientY - startY);
-    if (deltaY > 60) {
-      tracking = false;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    if (isHorizontal === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+      isHorizontal = Math.abs(dx) > Math.abs(dy);
     }
-  });
+    if (isHorizontal) e.preventDefault();
+  }, { passive: false });
 
-  detailPage.addEventListener('touchend', () => {
+  detailPage.addEventListener('touchend', e => {
     if (!tracking) return;
-    const deltaX = currentX - startX;
-    if (deltaX < -80) {
-      goMain();
-    }
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (isHorizontal && dx < -80 && Math.abs(dy) < 120) goMain();
     tracking = false;
-  });
+    isHorizontal = null;
+  }, { passive: true });
 }
 
 document.getElementById('f-photos').onchange = e => {
