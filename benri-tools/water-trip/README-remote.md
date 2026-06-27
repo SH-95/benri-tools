@@ -21,7 +21,6 @@ window.REMOTE_API_URL = 'http://localhost:9000/api/blob'
 location.reload()
 ```
 
-3. Use the "URL 공유" 버튼 to upload and get a `?blob=ID` link.
 
 Deploy to Vercel
 - Move `api/blob.js` to your project root under `api/blob.js` and deploy to Vercel.
