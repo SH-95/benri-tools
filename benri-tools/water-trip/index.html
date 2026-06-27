@@ -331,7 +331,7 @@ function setupPhotoViewerSwipe() {
     if (Math.abs(photoSwipe.deltaX) > threshold) {
       const direction = photoSwipe.deltaX < 0 ? 1 : -1;
       viewerImage.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
-      updateViewerImageTransform(direction * window.innerWidth);
+      updateViewerImageTransform(-direction * window.innerWidth);
       viewerImage.addEventListener('transitionend', function handler() {
         viewerImage.removeEventListener('transitionend', handler);
         advanceViewerPhoto(direction);
