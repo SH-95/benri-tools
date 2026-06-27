@@ -1,0 +1,2 @@
+# Ignore local debug logs
+**/firebase-debug.log

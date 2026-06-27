@@ -106,7 +106,8 @@
   .photo-viewer-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 250; align-items: center; justify-content: center; padding: 1rem; }
   .photo-viewer-bg.open { display: flex; }
   .photo-viewer { position: relative; width: min(920px, 100%); max-height: 92vh; background: var(--surface); border-radius: 16px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-  .viewer-image { width: 100%; max-height: 92vh; object-fit: contain; }
+  .viewer-image { width: 100%; max-height: 92vh; object-fit: contain; touch-action: pan-y; transition: transform 0.25s ease, opacity 0.25s ease; will-change: transform, opacity; }
+  .photo-viewer.dragging .viewer-image { transition: none; }
   .viewer-close, .viewer-prev, .viewer-next { position: absolute; border: none; background: rgba(0,0,0,0.35); color: #fff; cursor: pointer; border-radius: 999px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
   .viewer-close { top: 12px; right: 12px; }
   .viewer-prev { left: 12px; }
@@ -119,7 +120,7 @@
   .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
-  .field input, .field textarea { width: 100%; font-size: 14px; padding: 8px 10px; border-radius: var(--radius); border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-family: inherit; }
+  .field input, .field textarea { width: 100%; font-size: 16px; padding: 8px 10px; border-radius: var(--radius); border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-family: inherit; }
   .field input:focus, .field textarea:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
   .field textarea { min-height: 72px; resize: vertical; }
   .chip-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
@@ -266,6 +267,83 @@ let selFac = [];
 let selImages = [];
 let currentPhotoIndex = 0;
 let initialized = false;
+const viewerImage = document.getElementById('viewer-image');
+const photoViewer = document.querySelector('.photo-viewer');
+let photoSwipe = { startX: 0, currentX: 0, deltaX: 0, startY: 0, active: false };
+
+function updateViewerImageTransform(offset) {
+  viewerImage.style.transform = `translateX(${offset}px)`;
+  viewerImage.style.opacity = Math.max(0.5, 1 - Math.abs(offset) / window.innerWidth).toString();
+}
+
+function resetViewerImage() {
+  viewerImage.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
+  updateViewerImageTransform(0);
+}
+
+function advanceViewerPhoto(direction) {
+  const card = cards[current];
+  if (!card || !card.images || !card.images.length) return;
+  currentPhotoIndex = (currentPhotoIndex + direction + card.images.length) % card.images.length;
+  viewerImage.src = card.images[currentPhotoIndex];
+  viewerImage.style.transition = 'none';
+  viewerImage.style.transform = `translateX(${direction * window.innerWidth}px)`;
+  viewerImage.style.opacity = '0.5';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      viewerImage.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
+      updateViewerImageTransform(0);
+    });
+  });
+}
+
+function setupPhotoViewerSwipe() {
+  if (!photoViewer || !viewerImage) return;
+
+  photoViewer.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    photoSwipe.startX = e.touches[0].clientX;
+    photoSwipe.startY = e.touches[0].clientY;
+    photoSwipe.currentX = photoSwipe.startX;
+    photoSwipe.active = true;
+    photoViewer.classList.add('dragging');
+  });
+
+  photoViewer.addEventListener('touchmove', e => {
+    if (!photoSwipe.active || e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - photoSwipe.startX;
+    const deltaY = touch.clientY - photoSwipe.startY;
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 30) {
+      return;
+    }
+    photoSwipe.currentX = touch.clientX;
+    photoSwipe.deltaX = deltaX;
+    e.preventDefault();
+    viewerImage.style.transition = 'none';
+    updateViewerImageTransform(photoSwipe.deltaX);
+  }, { passive: false });
+
+  photoViewer.addEventListener('touchend', () => {
+    if (!photoSwipe.active) return;
+    photoViewer.classList.remove('dragging');
+    const threshold = 80;
+    if (Math.abs(photoSwipe.deltaX) > threshold) {
+      const direction = photoSwipe.deltaX < 0 ? 1 : -1;
+      viewerImage.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
+      updateViewerImageTransform(direction * window.innerWidth);
+      viewerImage.addEventListener('transitionend', function handler() {
+        viewerImage.removeEventListener('transitionend', handler);
+        advanceViewerPhoto(direction);
+      });
+    } else {
+      resetViewerImage();
+    }
+    photoSwipe.active = false;
+  });
+}
+
+setupPhotoViewerSwipe();
 
 // ── Firebase 저장 ──────────────────────────────────────
 async function saveToFirebase() {
@@ -362,9 +440,13 @@ function showDetail(i) {
       <div class="facility-grid">${facs.map(f=>`<div class="fac-item"><i class="ti ${f.icon}"></i>${f.label}</div>`).join('')}</div>
     </div>` : ''}
     ${card.notes ? `<div class="section">
-      <div class="sec-title"><i class="ti ti-notes"></i>메모</div>
-      <p class="notes-text">${card.notes}</p>
-    </div>` : ''}
+  <div class="sec-title"><i class="ti ti-notes"></i>메모</div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    ${card.notes.split('/').map(t => t.trim()).filter(Boolean).map(t =>
+      `<span style="padding:4px 10px;border-radius:8px;font-size:13px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border-strong);">${t}</span>`
+    ).join('')}
+  </div>
+</div>` : ''}
     ${card.images && card.images.length ? `<div class="section">
       <div class="sec-title"><i class="ti ti-photo"></i>사진</div>
       <div class="photo-grid">${card.images.map((src, idx) => `<img class="photo-thumb" src="${src}" alt="사진 ${idx+1}" data-idx="${idx}">`).join('')}</div>
@@ -489,7 +571,8 @@ function openPhotoViewer(index) {
   const card = cards[current];
   if(!card || !card.images || !card.images.length) return;
   currentPhotoIndex = index;
-  document.getElementById('viewer-image').src = card.images[currentPhotoIndex];
+  viewerImage.src = card.images[currentPhotoIndex];
+  resetViewerImage();
   document.getElementById('photo-viewer-bg').classList.add('open');
 }
 
@@ -501,7 +584,8 @@ function movePhoto(direction) {
   const card = cards[current];
   if(!card || !card.images || !card.images.length) return;
   currentPhotoIndex = (currentPhotoIndex + direction + card.images.length) % card.images.length;
-  document.getElementById('viewer-image').src = card.images[currentPhotoIndex];
+  viewerImage.src = card.images[currentPhotoIndex];
+  resetViewerImage();
 }
 
 // ── 이벤트 바인딩 ─────────────────────────────────────
@@ -515,6 +599,44 @@ document.getElementById('viewer-close-btn').onclick = closePhotoViewer;
 document.getElementById('viewer-prev-btn').onclick = () => movePhoto(-1);
 document.getElementById('viewer-next-btn').onclick = () => movePhoto(1);
 document.getElementById('photo-viewer-bg').onclick = e => { if(e.target === document.getElementById('photo-viewer-bg')) closePhotoViewer(); };
+
+// ── 상세페이지 왼쪽 스와이프 뒤로가기 ──────────────────────
+enableDetailSwipeBack();
+
+function enableDetailSwipeBack() {
+  const detailPage = document.getElementById('detail-page');
+  let startX = 0;
+  let startY = 0;
+  let currentX = 0;
+  let tracking = false;
+
+  detailPage.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    currentX = startX;
+    tracking = true;
+  });
+
+  detailPage.addEventListener('touchmove', e => {
+    if (!tracking || e.touches.length !== 1) return;
+    currentX = e.touches[0].clientX;
+    const deltaY = Math.abs(e.touches[0].clientY - startY);
+    if (deltaY > 60) {
+      tracking = false;
+    }
+  });
+
+  detailPage.addEventListener('touchend', () => {
+    if (!tracking) return;
+    const deltaX = currentX - startX;
+    if (deltaX < -80) {
+      goMain();
+    }
+    tracking = false;
+  });
+}
+
 document.getElementById('f-photos').onchange = e => {
   const files = Array.from(e.target.files);
   const available = 5 - selImages.length;
